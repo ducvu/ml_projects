@@ -41,6 +41,10 @@ df = pd.read_csv("./data/creditcard.csv", encoding = 'unicode_escape')
 # 9. Plot correlation matrix
 
 
+# . Anomaly Detection : Our main aim in this section is to remove "extreme outliers" from features that have a high correlation with our classes. This will have a positive impact on the accuracy of our models. https://machinelearningmastery.com/how-to-use-statistics-to-identify-outliers-in-data/
+
+
+
 # Evaluate the Performance------------------------------------------------
 
 # Train and Test Sets: 
