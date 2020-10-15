@@ -102,7 +102,7 @@ print(confusion_matrix(Y_validation, predictions))
 print(classification_report(Y_validation, predictions))
 
 
-# Tune Hyperparameters for kNN
+# Tune Hyperparameters for kNN ---------------------------------------------
 # n_neighbors in [1 to 21]
 # metric in [‘euclidean’, ‘manhattan’, ‘minkowski’]
 # weights in [‘uniform’, ‘distance’]
@@ -110,26 +110,40 @@ print(classification_report(Y_validation, predictions))
 from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
+
 model = KNeighborsClassifier()
 n_neighbors = range(1, 21, 2)
 weights = ['uniform', 'distance']
 metric = ['euclidean', 'manhattan', 'minkowski']
+
 # define grid search
 grid = dict(n_neighbors=n_neighbors,weights=weights,metric=metric)
 cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
 grid_search = GridSearchCV(estimator=model, param_grid=grid, n_jobs=-1, cv=cv, scoring='accuracy',error_score=0)
+
 grid_result = grid_search.fit(X_train, Y_train)
 
 # summarize results
-print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
+print("Best of kNN: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
+# Best: 0.983333 using {'metric': 'euclidean', 'n_neighbors': 13, 'weights': 'uniform'}
+
 means = grid_result.cv_results_['mean_test_score']
 stds = grid_result.cv_results_['std_test_score']
 params = grid_result.cv_results_['params']
 for mean, stdev, param in zip(means, stds, params):
     print("%f (%f) with: %r" % (mean, stdev, param))
 	
-
-
+# Tune param for logistic regression------------------------------------------
+# full list of param https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html
+model = LogisticRegression()
+c_values = [10000,5000,1000,500,200,150,100, 10, 1.0, 0.1, 0.01]
+grid = dict(C=c_values)
+cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
+grid_search = GridSearchCV(estimator=model, param_grid=grid, n_jobs=-1, cv=cv, scoring='accuracy',error_score=0)
+grid_result = grid_search.fit(X_train, Y_train)
+# summarize results
+print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
+# 0.9833333
 
 
 
