@@ -33,7 +33,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 
 # Read data ---------------------------------
-filename = './data/iris.data.csv'
+filename = 'D:/ml_projects/helloworld_irish/data/iris.data.csv'
 names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'class']
 df = read_csv(filename, names=names)
 
@@ -153,20 +153,32 @@ import numpy
 # fix random seed for reproducibility
 seed = 7
 numpy.random.seed(seed)
-# Encode Categorical Variable 
+
+
+# Encode Categorical Variable (y)
+from sklearn.preprocessing import OneHotEncoder 
+from sklearn.preprocessing import LabelEncoder   
+le = LabelEncoder()
+ohe = OneHotEncoder()
+
+Y_train_ec = le.fit_transform(Y_train)
+Y_train_ec = ohe.fit_transform(Y_train_ec.reshape(-1,1))
+
+Y_validation_ec = le.fit_transform(Y_validation)
+Y_validation_ec = ohe.fit_transform(Y_validation_ec.reshape(-1,1))
+
 # Model : INPUT(4) => FC(8) => RELU => FC(8) => SOFTMAX
 model = Sequential()
-model.add(Dense(8, input_dim=4, init= "uniform" , activation= "relu"))
-model.add(Dense(8, init= "uniform" , activation= "relu" ))
-model.add(Dense(1, init= "uniform" , activation= "softmax" ))
-# Compile model
+model.add(Dense(10, input_dim=4, init= "uniform" , activation= "relu"))
+model.add(Dense(10, init= "uniform" , activation= "relu" ))
+model.add(Dense(3, init= "uniform" , activation= "softmax" ))
 model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
-# Fit the model
-model.fit(X_train, Y_train, nb_epoch=150, batch_size=10)
-# evaluate the model
-scores = model.evaluate(X, Y)
+model.fit(X_train, Y_train_ec , nb_epoch=150, batch_size=10)
+scores = model.evaluate(X_train, Y_train_ec)
+print('Keras accuracy: %.2f' % (scores[1]*100))
 
-
+model.evaluate(X_train, Y_train_ec)
+model.evaluate(X_validation, Y_validation_ec)
 
 
 
